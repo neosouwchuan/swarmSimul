@@ -10,14 +10,16 @@ public class playerControlTest : MonoBehaviour
     float vertical;
 
     public float runSpeed = 20.0f;
-    public float type = 0;
+    public int type = 0;
     private float speed;
     private float orientation;
     private float raycastLength = (float)2;
+    public int maxFriendly = 0;
     private float raycastOffsetLength = (float).7;
     private Vector2 raycastToThrow;
     private Vector3 raycastOffset;
     private float[] inputArr;
+    public float[] outwardComms;
     int[] rayAngles = new int[] {90,60,30,0,-30,-60,-90 };
 
     string[] tagsAccepted = new string[] {"Drone","Enemy"};
@@ -39,7 +41,12 @@ public class playerControlTest : MonoBehaviour
 
     void FixedUpdate()
     {
+
+    }   
+    public float[] runRL(float[] friendlyInput){
         inputArr = new float[100];
+        outwardComms = new float[3];
+        body = GetComponent<Rigidbody2D>();
         inputArr[0] = body.position.x;
         inputArr[1] = body.position.y;
         inputArr[2] = 0f;
@@ -67,5 +74,9 @@ public class playerControlTest : MonoBehaviour
         tmpPos.x = Mathf.Clamp(tmpPos.x,-21.25f,21.25f);
         tmpPos.y = Mathf.Clamp(tmpPos.y,-9.25f,9.25f);
         transform.position = tmpPos;
-    }   
+        outwardComms[0] = 1;
+        outwardComms[1] = Random.Range(0f,1f);
+        outwardComms[2] = Random.Range(0f,1f);
+        return outwardComms;
+    }
 }
