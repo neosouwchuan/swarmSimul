@@ -18,6 +18,7 @@ public class enemyControl : MonoBehaviour
     private Vector3 raycastOffset;
     private float[] inputArr;
     int[] rayAngles =  new int[] {90,60,30,0,-30,-60,-90 };
+    
     void Start ()
     {
 

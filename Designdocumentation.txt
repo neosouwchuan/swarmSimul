@@ -1,0 +1,20 @@
+Design documentation
+20 drones per match
+Each drone will have the following inputs
+x and y position
+time input
+5 hitscan vectors which shoot out in front of the drones and have 2 possible returns drone or ship, where the float represents the distance. If 0 then its empty sea
+3 sets of inputs for 3 drones closest within n meters. Each set consists of a impossible to remove drone identifier that consistently emits and 2 float outputs to be determined by the drone.
+Drone Input size of 22
+
+The drone actions are
+turn left, forward, turn right,reverse or nothing.
+To be determined if we want an overriding do nothing function and if we want toa llow simultaneous actions
+Therefore drone output size of 5
+
+Rewards are going to be difficult to determine
+Obviously Shorter distance to ship should be rewarded, however after a certain threshold drones are then penalised from being far from the ship to incentivize them to move in
+Dying is bad
+Teamwork is good but what is teamwork in this case
+Taking down the ship is good
+After the kill since its a product of teamwork, every drone within the kill radius of the ship and every drone that died recently gets rewarded the same and the amount is more than the dying amount, however the killer gets slightlymore.
