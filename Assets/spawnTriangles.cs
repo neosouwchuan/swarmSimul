@@ -40,7 +40,7 @@ public class spawnTriangles : MonoBehaviour
     
     void FixedUpdate()
     {
-        for(int k = 0;k<numOfComms;k++){
+        for(int k = 0;k<numOfTriangles;k++){
 
             for(int i = 0;i<numOfFriendlies;i++){
                 for(int j = 0;j<numOfComms;j++){

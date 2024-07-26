@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-public class playerControlTest : MonoBehaviour
+public class starterAgent : Agent
 {
     Rigidbody2D body;
     
@@ -21,7 +21,9 @@ public class playerControlTest : MonoBehaviour
     private Vector2 raycastToThrow;
     private Vector3 raycastOffset;
     private float[] inputArr;
+    private float previousDistance;
     public float[] outwardComms;
+    private Vector3 target;
     int[] rayAngles = new int[] {90,60,30,0,-30,-60,-90 };
 
     string[] tagsAccepted = new string[] {"Drone","Enemy"};
@@ -30,17 +32,63 @@ public class playerControlTest : MonoBehaviour
 
         body = GetComponent<Rigidbody2D>();
     }
+    public override void OnEpisodeBegin()
+    {
+        Debug.Log("Reset");
+        transform.position = new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
+        target= new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
+        Debug.Log(target);
+        previousDistance = -Vector3.Distance(transform.position,target);
+        orientation =Random.Range(0f, 360f);
+        body.rotation = orientation;
+    }
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation((Vector3)transform.position);
+        sensor.AddObservation((Vector3)target);
+        //sensor.AddObservation((Vector1)target);
+    }
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        //Debug.Log(actions.ContinuousActions.Length);
+        float moveX = actions.ContinuousActions[0];
+        float moveY = actions.ContinuousActions[1];
+        orientation += horizontal;
+        speed = Mathf.Clamp(speed+moveY,-5,5);
+        body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
+        float newDistance = -Vector3.Distance(transform.position,target);
+        AddReward(newDistance-previousDistance);
+        if (newDistance>0.5f){
+            OnEpisodeBegin();
+        }
+        previousDistance= newDistance;
+    }
 
     void Update()
     {
-        // Gives a value between -1 and 1
-        horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
-        orientation -= (float)horizontal;
-        vertical = Input.GetAxisRaw("Vertical"); // -1 is down
-        speed += vertical *1;
-        speed = Mathf.Clamp(speed,-5,5);
-    }
+        RequestDecision();
+        //Gives a value between -1 and 1
+        // horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
+        // orientation -= (float)horizontal;
+        // vertical = Input.GetAxisRaw("Vertical"); // -1 is down
+        // speed += vertical *1;
+        // speed = Mathf.Clamp(speed,-5,5);
+        // float newDistance = -Vector3.Distance(transform.position,target);
+        // AddReward(newDistance-previousDistance);
+        // previousDistance= newDistance;
 
+    }
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
+
+        float moveX = -Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+        orientation += moveX;
+        speed = Mathf.Clamp(speed+moveY,-5,5);
+        body.rotation = orientation;
+        body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
+    }
     void FixedUpdate()
     {
 
