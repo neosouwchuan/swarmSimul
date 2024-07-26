@@ -35,8 +35,8 @@ public class starterAgent : Agent
     public override void OnEpisodeBegin()
     {
         Debug.Log("Reset");
-        transform.position = new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
-        target= new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
+        transform.position = new Vector3(Random.Range(-20f, -15f), Random.Range(-8f, 8f),0);
+        target= new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
         Debug.Log(target);
         previousDistance = -Vector3.Distance(transform.position,target);
         orientation =Random.Range(0f, 360f);
@@ -59,11 +59,16 @@ public class starterAgent : Agent
         float newDistance = -Vector3.Distance(transform.position,target);
         AddReward(newDistance-previousDistance);
         if (newDistance>0.5f){
+            Debug.Log("Win");
             OnEpisodeBegin();
         }
         previousDistance= newDistance;
     }
-
+    public void DroneStruck(){
+        AddReward(-10f);
+        Debug.Log("Death");
+        OnEpisodeBegin();
+    }
     void Update()
     {
         RequestDecision();
