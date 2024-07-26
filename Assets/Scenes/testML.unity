@@ -505,71 +505,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1754659325}
   m_SourcePrefab: {fileID: 100100000, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
---- !u!1001 &512428495
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 364712178120311622, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889518549379335207, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5827361987573120063, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      propertyPath: m_Name
-      value: Carrier
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 364712178120311622, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5827361987573120063, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1223629636}
-  m_SourcePrefab: {fileID: 100100000, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
 --- !u!1 &978902018
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,25 +663,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1223629635 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5827361987573120063, guid: e37657c99a4b54a439416bbdd6194e90, type: 3}
-  m_PrefabInstance: {fileID: 512428495}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1223629636
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223629635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eec5fe2943e8d9c43b9b45dfc6b6cb14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  runSpeed: 20
 --- !u!1 &1426392760
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,7 +975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 6
+    VectorObservationSize: 8
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -1086,4 +1002,3 @@ SceneRoots:
   - {fileID: 1426392764}
   - {fileID: 196576206}
   - {fileID: 120593643}
-  - {fileID: 512428495}

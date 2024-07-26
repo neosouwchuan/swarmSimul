@@ -45,7 +45,8 @@ public class starterAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation((Vector3)transform.position);
-        sensor.AddObservation((Vector3)target);
+        sensor.AddObservation((Vector3)target);//s
+        sensor.AddObservation(new Vector2(orientation,speed));
         //sensor.AddObservation((Vector1)target);
     }
     public override void OnActionReceived(ActionBuffers actions)
