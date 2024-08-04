@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+
 public class starterAgent : Agent
 {
     Rigidbody2D body;
@@ -24,9 +25,13 @@ public class starterAgent : Agent
     private float previousDistance;
     public float[] outwardComms;
     private float newDirection;
+    private int maxStep = 300;
+    private float reward = 0;
+    private int currStep = 0;
+    private float maxTimePenalty = 1f;
     private Vector3 target;
     int[] rayAngles = new int[] {90,60,30,0,-30,-60,-90 };
-
+    private int Mod(int a, int n) => (a % n + n) % n;
     string[] tagsAccepted = new string[] {"Drone","Enemy"};
     void Start ()
     {
@@ -36,40 +41,55 @@ public class starterAgent : Agent
     public override void OnEpisodeBegin()
     {
         Debug.Log("Reset");
-        transform.position = new Vector3(Random.Range(-20f, -15f), Random.Range(-8f, 8f),0);
-        target= new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
+        transform.position = new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
+        target= new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
         targetObj.transform.position=target;
         //Debug.Log(target);
         speed = 0;
         previousDistance = -Vector3.Distance(transform.position,target);
-        orientation =Random.Range(0f, 360f);
+        orientation =Random.Range(0,360);//Random.Range(0f, 360f);
         body.rotation = orientation;
         body.velocity = new Vector2(0, 0);
+        currStep = 0;
     }
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(target);//s
-        sensor.AddObservation(target-transform.position);//s
-        sensor.AddObservation(new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed));
+        // sensor.AddObservation(transform.position);
+        // sensor.AddObservation(target);//s
+
+        sensor.AddObservation(transform.InverseTransformDirection(target-transform.position));//s
+        sensor.AddObservation(speed);
+
+        //sensor.AddObservation(new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed));
         //sensor.AddObservation((Vector1)target);
     }
     public override void OnActionReceived(ActionBuffers actions)
     {
+        reward = 0;
         //Debug.Log(actions.ContinuousActions.Length);
-        float moveX = actions.ContinuousActions[0];
-        float moveY = actions.ContinuousActions[1];
+        float moveX = actions.DiscreteActions[0]-1;
+        float moveY = actions.DiscreteActions[1]-1;
         if (true){
             //orientation += Mathf.Clamp(moveX*10f,-10,10);   
-            orientation += Mathf.Clamp(Mathf.RoundToInt(moveX)*5,-10,10);
+            orientation += moveX * 5;
+            
         }else{
             newDirection = moveX*180f;
             orientation = Mathf.Clamp(newDirection,orientation-5f,orientation+5f);
         }
-        speed = Mathf.Clamp(speed+moveY,-5,5);
+        orientation=Mod((int)orientation,360);
+        speed = Mathf.Clamp(speed+moveY*2,-5,5);
         body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
         float newDistance = -Vector3.Distance(transform.position,target);
-        AddReward(newDistance-previousDistance);
+        body.rotation = orientation;
+        reward += newDistance-previousDistance;
+        // if (newDistance-previousDistance<0){
+        //     reward += (newDistance-previousDistance) * 2f;
+        // }else{
+        //     reward += newDistance-previousDistance;
+        // }
+        reward -= (float)(currStep/maxStep) * maxTimePenalty;
+        currStep +=1;
         // if (newDistance>previousDistance){
         //     AddReward(5f);
         // }else{
@@ -106,16 +126,31 @@ public class starterAgent : Agent
     {
         ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
 
-        float moveX = -Input.GetAxisRaw("Horizontal");
-        float moveY = Input.GetAxisRaw("Vertical");
-        orientation += moveX;
+        float moveX = Mathf.Clamp(-Input.GetAxisRaw("Horizontal"),-1f,1f);
+        float moveY = Mathf.Clamp(Input.GetAxisRaw("Vertical"),-1f,1f);
+        //Debug.Log(actions.ContinuousActions.Length);
+        if (true){
+            //orientation += Mathf.Clamp(moveX*10f,-10,10);   
+            orientation += Mathf.Clamp(Mathf.RoundToInt(moveX)*5,-10,10);
+        }else{
+            newDirection = moveX*180f;
+            orientation = Mathf.Clamp(newDirection,orientation-5f,orientation+5f);
+        }
+        orientation = Mod((int)orientation,360);
         speed = Mathf.Clamp(speed+moveY,-5,5);
         body.rotation = orientation;
         body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
         float newDistance = -Vector3.Distance(transform.position,target);
-        Debug.Log(newDistance-previousDistance);
         AddReward(newDistance-previousDistance);
-        if (newDistance>-1.5f){
+        Debug.Log(string.Format("TargetDir: {0} VelocityDir: {1}", transform.InverseTransformDirection(target-transform.position), transform.InverseTransformDirection(body.velocity)));
+        // if (newDistance>previousDistance){
+        //     AddReward(5f);
+        // }else{
+        //     AddReward(-5f);
+        // }
+        //Debug.Log(40+newDistance);
+        if (newDistance>-1.50f){
+            AddReward(20f);
             Debug.Log("Win");
             OnEpisodeBegin();
         }
