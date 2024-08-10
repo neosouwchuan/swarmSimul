@@ -122,6 +122,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &45638142
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4233271882295435490, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_Name
+      value: Carrier Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8095646525431142650, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8fa63f8ff619b114ea363c9ecf97e41b, type: 3}
 --- !u!1 &120593639
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +193,7 @@ GameObject:
   - component: {fileID: 120593640}
   m_Layer: 6
   m_Name: Static Sprite (4)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -294,7 +351,7 @@ GameObject:
   - component: {fileID: 196576203}
   m_Layer: 6
   m_Name: Static Sprite (3)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -448,11 +505,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4085395292472934220, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.12
+      value: -8.14
       objectReference: {fileID: 0}
     - target: {fileID: 4085395292472934220, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.16
+      value: -2.51
       objectReference: {fileID: 0}
     - target: {fileID: 4085395292472934220, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
       propertyPath: m_LocalPosition.z
@@ -490,6 +547,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Triangle
       objectReference: {fileID: 0}
+    - target: {fileID: 7067437608466082329, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7067437608466082329, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
+      propertyPath: m_TagString
+      value: Drone
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828829918879805517, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828829918879805517, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
+      propertyPath: m_UseAutoMass
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6915656904625313662, guid: e5a7639b46bc2854bbab313011c18d21, type: 3}
     m_RemovedGameObjects: []
@@ -519,7 +592,7 @@ GameObject:
   - component: {fileID: 978902019}
   m_Layer: 6
   m_Name: Static Sprite (1)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -677,7 +750,7 @@ GameObject:
   - component: {fileID: 1426392761}
   m_Layer: 6
   m_Name: Static Sprite (2)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1015,11 +1088,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: RayPerceptionSensor
-  m_DetectableTags: []
-  m_RaysPerDirection: 0
-  m_MaxRayDegrees: 79
-  m_SphereCastRadius: 0.81
-  m_RayLength: 6
+  m_DetectableTags:
+  - Drone
+  m_RaysPerDirection: 3
+  m_MaxRayDegrees: 67
+  m_SphereCastRadius: 0.5
+  m_RayLength: 12
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1059,16 +1133,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 11
+    VectorObservationSize: 4
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 3
-      BranchSizes: 
-    VectorActionSize: 03000000
+      m_NumContinuousActions: 0
+      BranchSizes: 0300000003000000
+    VectorActionSize: 0300000003000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 1
+    VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: c2a043dc4f9e22f4c8b52fcae87888ff, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: My Behavior
@@ -1087,3 +1161,4 @@ SceneRoots:
   - {fileID: 196576206}
   - {fileID: 120593643}
   - {fileID: 1519002969}
+  - {fileID: 45638142}

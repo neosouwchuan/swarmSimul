@@ -8,41 +8,48 @@ using Unity.MLAgents.Sensors;
 public class starterAgent : Agent
 {
     Rigidbody2D body;
-    
+    private int maxStep = 300;
+    private float reward = 0;
+    private int currStep = 0;
+    private float maxTimePenalty = 1f;
+    private float raycastLength = (float)8;
+    public int maxFriendly = 0;
+    private float raycastOffsetLength = (float).7;
+    public float runSpeed = 20.0f;
+    public int type = 0;
+    int[] rayAngles = new int[] {90,60,30,0,-30,-60,-90 };
     float horizontal;
     float vertical;
     private GameObject targetObj;
-    public float runSpeed = 20.0f;
-    public int type = 0;
+    private GameObject carrier;
+
     private float speed;
     private float orientation;
-    private float raycastLength = (float)2;
-    public int maxFriendly = 0;
-    private float raycastOffsetLength = (float).7;
+
     private Vector2 raycastToThrow;
     private Vector3 raycastOffset;
     private float[] inputArr;
     private float previousDistance;
     public float[] outwardComms;
     private float newDirection;
-    private int maxStep = 300;
-    private float reward = 0;
-    private int currStep = 0;
-    private float maxTimePenalty = 1f;
+
     private Vector3 target;
-    int[] rayAngles = new int[] {90,60,30,0,-30,-60,-90 };
+
     private int Mod(int a, int n) => (a % n + n) % n;
-    string[] tagsAccepted = new string[] {"Drone","Enemy"};
+    string[] tagsAccepted = new string[] {"Drone","Enemy","Wall"};
+    private int indexOfCollision;
     void Start ()
     {
         targetObj = GameObject.Find("target");
+        carrier = GameObject.Find("Carrier Variant");
         body = GetComponent<Rigidbody2D>();
     }
     public override void OnEpisodeBegin()
     {
         Debug.Log("Reset");
-        transform.position = new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);
-        target= new Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
+        transform.position = new Vector3(Random.Range(-18.23f,-8.61f), Random.Range(-8f, 8f),0);
+        carrier.transform.position = new Vector3(0, 0,0);
+        target= new Vector3(Random.Range(8.61f, 18.23f), Random.Range(-8f, 8f),0);//Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
         targetObj.transform.position=target;
         //Debug.Log(target);
         speed = 0;
@@ -52,14 +59,39 @@ public class starterAgent : Agent
         body.velocity = new Vector2(0, 0);
         currStep = 0;
     }
+
     public override void CollectObservations(VectorSensor sensor)
     {
         // sensor.AddObservation(transform.position);
         // sensor.AddObservation(target);//s
-
+        inputArr = new float[100];
         sensor.AddObservation(transform.InverseTransformDirection(target-transform.position));//s
         sensor.AddObservation(speed);
+        // each raycast requires an observation of a vector2 representing local vector thrown,another local vector for orientation and a one hot vector 
+        // index 0 for nothing, index 1 for drone, index 2 for enemy and index 3 for wall
+        for (int i = 0;i < 7; i++){
+            raycastOffset = new Vector3(-Mathf.Sin((rayAngles[i]+orientation)/180*(Mathf.PI))*raycastOffsetLength,Mathf.Cos((rayAngles[i]+orientation)/180*(Mathf.PI))*raycastOffsetLength,0);
+            raycastToThrow = new Vector2(-Mathf.Sin((rayAngles[i]+orientation)/180*(Mathf.PI)),Mathf.Cos((rayAngles[i]+orientation)/180*(Mathf.PI)));
+            indexOfCollision = 0;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position+raycastOffset, raycastToThrow,raycastLength);
+            if (hit){
+                if(hit.collider.tag=="Wall"){
+                    sensor.AddObservation(raycastToThrow*hit.distance);
+                    sensor.AddObservation(new Vector2(0,0));
+                    sensor.AddOneHotObservation()
+                }else{
 
+                }
+                Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*hit.distance,Color.red);
+                // inputArr[i*(tagsAccepted.Length+2)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3]=1;
+                // inputArr[i*(tagsAccepted.Length+2)+tagsAccepted.Length+3]=hit.distance;
+                //Debug.Log(hit.collider.tag=="Drone");
+                // Debug.Log(string.Format("Hit Position: {0} Hit Distance: {1} Index : {2}", hit.point, hit.distance,i*(tagsAccepted.Length+1)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3));
+            }else{
+
+            }
+            //Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*raycastLength,Color.green);
+        }
         //sensor.AddObservation(new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed));
         //sensor.AddObservation((Vector1)target);
     }
@@ -82,7 +114,7 @@ public class starterAgent : Agent
         body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
         float newDistance = -Vector3.Distance(transform.position,target);
         body.rotation = orientation;
-        reward += newDistance-previousDistance;
+        reward += (newDistance-previousDistance)*3f;
         // if (newDistance-previousDistance<0){
         //     reward += (newDistance-previousDistance) * 2f;
         // }else{
@@ -95,6 +127,7 @@ public class starterAgent : Agent
         // }else{
         //     AddReward(-5f);
         // }
+        AddReward(reward);
         //Debug.Log(40+newDistance);
         if (newDistance>-1.50f){
             AddReward(20f);
@@ -128,27 +161,25 @@ public class starterAgent : Agent
 
         float moveX = Mathf.Clamp(-Input.GetAxisRaw("Horizontal"),-1f,1f);
         float moveY = Mathf.Clamp(Input.GetAxisRaw("Vertical"),-1f,1f);
-        //Debug.Log(actions.ContinuousActions.Length);
+        reward = 0;
         if (true){
             //orientation += Mathf.Clamp(moveX*10f,-10,10);   
-            orientation += Mathf.Clamp(Mathf.RoundToInt(moveX)*5,-10,10);
+            orientation += moveX * 5;
+            
         }else{
             newDirection = moveX*180f;
             orientation = Mathf.Clamp(newDirection,orientation-5f,orientation+5f);
         }
-        orientation = Mod((int)orientation,360);
-        speed = Mathf.Clamp(speed+moveY,-5,5);
-        body.rotation = orientation;
+        orientation=Mod((int)orientation,360);
+        speed = Mathf.Clamp(speed+moveY*2,-5,5);
         body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
         float newDistance = -Vector3.Distance(transform.position,target);
-        AddReward(newDistance-previousDistance);
-        Debug.Log(string.Format("TargetDir: {0} VelocityDir: {1}", transform.InverseTransformDirection(target-transform.position), transform.InverseTransformDirection(body.velocity)));
-        // if (newDistance>previousDistance){
-        //     AddReward(5f);
-        // }else{
-        //     AddReward(-5f);
-        // }
-        //Debug.Log(40+newDistance);
+        body.rotation = orientation;
+        reward += (newDistance-previousDistance)*3f;
+        reward -= (float)(currStep/maxStep) * maxTimePenalty;
+        currStep +=1;
+        AddReward(reward);
+
         if (newDistance>-1.50f){
             AddReward(20f);
             Debug.Log("Win");
@@ -175,6 +206,7 @@ public class starterAgent : Agent
             if (hit){
                 inputArr[i*(tagsAccepted.Length+1)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3]=1;
                 inputArr[i*(tagsAccepted.Length+1)+tagsAccepted.Length+3]=hit.distance;
+                Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*hit.distance,Color.green);
                 //Debug.Log(hit.collider.tag=="Drone");
                 Debug.Log(string.Format("Hit Position: {0} Hit Distance: {1} Index : {2}", hit.point, hit.distance,i*(tagsAccepted.Length+1)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3));
             }else{
@@ -182,7 +214,7 @@ public class starterAgent : Agent
                 //     inputArr[i*(tagsAccepted.length+1)+j]=0;
                 // }
             }
-            Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*raycastLength,Color.green);
+            
         }
         body.velocity = new Vector2(-Mathf.Sin(orientation/180*(Mathf.PI))*speed, Mathf.Cos(orientation/180*(Mathf.PI))*speed);
         body.rotation = orientation;
