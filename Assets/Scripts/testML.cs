@@ -8,6 +8,7 @@ using Unity.MLAgents.Sensors;
 public class starterAgent : Agent
 {
     Rigidbody2D body;
+    public enemyControlV2 enemyCarrier;
     private int maxStep = 300;
     private float reward = 0;
     private int currStep = 0;
@@ -24,7 +25,7 @@ public class starterAgent : Agent
     private GameObject carrier;
 
     private float speed;
-    private float orientation;
+    public float orientation;
 
     private Vector2 raycastToThrow;
     private Vector3 raycastOffset;
@@ -32,12 +33,11 @@ public class starterAgent : Agent
     private float previousDistance;
     public float[] outwardComms;
     private float newDirection;
-
+    private float collisionOrientation;
     private Vector3 target;
-
+   
     private int Mod(int a, int n) => (a % n + n) % n;
-    string[] tagsAccepted = new string[] {"Drone","Enemy","Wall"};
-    private int indexOfCollision;
+    string[] tagsAccepted = new string[] {"Drone","Enemy","Wall","Nil"};
     void Start ()
     {
         targetObj = GameObject.Find("target");
@@ -49,6 +49,7 @@ public class starterAgent : Agent
         Debug.Log("Reset");
         transform.position = new Vector3(Random.Range(-18.23f,-8.61f), Random.Range(-8f, 8f),0);
         carrier.transform.position = new Vector3(0, 0,0);
+        enemyCarrier.orientation = Random.Range(0,360);
         target= new Vector3(Random.Range(8.61f, 18.23f), Random.Range(-8f, 8f),0);//Vector3(Random.Range(-20f, 20f), Random.Range(-8f, 8f),0);//new Vector3(Random.Range(10f, 20f), Random.Range(-8f, 8f),0);
         targetObj.transform.position=target;
         //Debug.Log(target);
@@ -64,7 +65,6 @@ public class starterAgent : Agent
     {
         // sensor.AddObservation(transform.position);
         // sensor.AddObservation(target);//s
-        inputArr = new float[100];
         sensor.AddObservation(transform.InverseTransformDirection(target-transform.position));//s
         sensor.AddObservation(speed);
         // each raycast requires an observation of a vector2 representing local vector thrown,another local vector for orientation and a one hot vector 
@@ -72,23 +72,24 @@ public class starterAgent : Agent
         for (int i = 0;i < 7; i++){
             raycastOffset = new Vector3(-Mathf.Sin((rayAngles[i]+orientation)/180*(Mathf.PI))*raycastOffsetLength,Mathf.Cos((rayAngles[i]+orientation)/180*(Mathf.PI))*raycastOffsetLength,0);
             raycastToThrow = new Vector2(-Mathf.Sin((rayAngles[i]+orientation)/180*(Mathf.PI)),Mathf.Cos((rayAngles[i]+orientation)/180*(Mathf.PI)));
-            indexOfCollision = 0;
             RaycastHit2D hit = Physics2D.Raycast(transform.position+raycastOffset, raycastToThrow,raycastLength);
             if (hit){
                 if(hit.collider.tag=="Wall"){
                     sensor.AddObservation(raycastToThrow*hit.distance);
                     sensor.AddObservation(new Vector2(0,0));
-                    sensor.AddOneHotObservation()
+                    sensor.AddOneHotObservation(System.Array.IndexOf(tagsAccepted,hit.collider.tag),tagsAccepted.Length);
                 }else{
-
+                    sensor.AddObservation(raycastToThrow*hit.distance);
+                    sensor.AddObservation(new Vector2(Mathf.Sin(orientation-hit.transform.rotation.z),Mathf.Cos(-orientation+hit.transform.rotation.z)));
+                    sensor.AddOneHotObservation(System.Array.IndexOf(tagsAccepted,hit.collider.tag),tagsAccepted.Length);
+                    //Debug.Log(string.Format("W: {0} Y: {1} Z : {2}",hit.transform.rotation.w,hit.transform.rotation.y,hit.transform.rotation.z));
+                    Debug.Log(Mathf.Sin(orientation-hit.transform.rotation.z));
                 }
                 Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*hit.distance,Color.red);
-                // inputArr[i*(tagsAccepted.Length+2)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3]=1;
-                // inputArr[i*(tagsAccepted.Length+2)+tagsAccepted.Length+3]=hit.distance;
-                //Debug.Log(hit.collider.tag=="Drone");
-                // Debug.Log(string.Format("Hit Position: {0} Hit Distance: {1} Index : {2}", hit.point, hit.distance,i*(tagsAccepted.Length+1)+System.Array.IndexOf(tagsAccepted,hit.collider.tag)+3));
             }else{
-
+                sensor.AddObservation(raycastToThrow*raycastLength);
+                sensor.AddObservation(new Vector2(0,0));
+                sensor.AddOneHotObservation(System.Array.IndexOf(tagsAccepted,"Nil"),tagsAccepted.Length);
             }
             //Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*raycastLength,Color.green);
         }

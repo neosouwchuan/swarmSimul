@@ -11,7 +11,7 @@ public class enemyControlV2 : MonoBehaviour
     public float type = 1;
     public float runSpeed = 20.0f;
     private float speed;
-    private float orientation;
+    public float orientation;
     private float raycastLength = (float)4.5;
     private float raycastOffsetLength = (float)1.75;
     private Vector2 raycastToThrow;
