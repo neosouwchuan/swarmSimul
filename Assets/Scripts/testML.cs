@@ -83,7 +83,7 @@ public class starterAgent : Agent
                     sensor.AddObservation(new Vector2(Mathf.Sin(orientation-hit.transform.rotation.z),Mathf.Cos(-orientation+hit.transform.rotation.z)));
                     sensor.AddOneHotObservation(System.Array.IndexOf(tagsAccepted,hit.collider.tag),tagsAccepted.Length);
                     //Debug.Log(string.Format("W: {0} Y: {1} Z : {2}",hit.transform.rotation.w,hit.transform.rotation.y,hit.transform.rotation.z));
-                    Debug.Log(Mathf.Sin(orientation-hit.transform.rotation.z));
+                    //Debug.Log(Mathf.Sin(orientation-hit.transform.rotation.z));
                 }
                 Debug.DrawRay(transform.position+raycastOffset,raycastToThrow*hit.distance,Color.red);
             }else{
